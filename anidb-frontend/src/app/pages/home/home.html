@@ -1,0 +1,33 @@
+<div class="min-h-screen bg-[#0a0a0a] text-white px-8 py-10">
+
+  <!-- Search results -->
+  <ng-container *ngIf="searchQuery">
+    <p class="section-title">Qidiruv natijalari</p>
+    <h2 class="text-2xl font-semibold text-white mb-8">"{{ searchQuery }}"</h2>
+    <div *ngIf="searchResults.length === 0" class="text-white/20 text-sm py-20 text-center tracking-widest uppercase">Hech narsa topilmadi</div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      <app-anime-card *ngFor="let anime of searchResults" [anime]="anime" />
+    </div>
+  </ng-container>
+
+  <!-- Normal home -->
+  <ng-container *ngIf="!searchQuery">
+
+    <!-- Top Rated -->
+    <section class="mb-14">
+      <p class="section-title" style="border-left: 2px solid #fbbf24; padding-left: 12px;">Reyting bo'yicha</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <app-anime-card *ngFor="let anime of topAnimes" [anime]="anime" />
+      </div>
+    </section>
+
+    <!-- Latest -->
+    <section>
+      <p class="section-title" style="border-left: 2px solid #fbbf24; padding-left: 12px;">Yangi qo'shilganlar</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <app-anime-card *ngFor="let anime of latestAnimes" [anime]="anime" />
+      </div>
+    </section>
+
+  </ng-container>
+</div>

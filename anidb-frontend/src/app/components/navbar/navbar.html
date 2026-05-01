@@ -1,0 +1,23 @@
+<nav class="bg-[#0a0a0a] border-b border-white/5 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+  <a routerLink="/" class="text-white font-bold text-lg tracking-[0.15em] uppercase">Ani<span class="text-amber-400">DB</span></a>
+
+  <div class="flex items-center gap-0">
+    <input
+      [(ngModel)]="query"
+      (keyup.enter)="search()"
+      type="text"
+      placeholder="Anime qidiring..."
+      class="bg-transparent border border-white/10 text-white text-sm px-4 py-2 w-64 focus:outline-none focus:border-amber-400 transition-colors placeholder-white/20"
+    />
+    <button
+      (click)="search()"
+      class="bg-amber-400 hover:bg-amber-300 text-black text-sm font-semibold px-5 py-2 transition-colors duration-200"
+    >
+      Qidirish
+    </button>
+  </div>
+
+  <div class="flex gap-8 text-xs tracking-widest uppercase">
+    <a routerLink="/" class="text-white/50 hover:text-white transition-colors duration-200">Bosh sahifa</a>
+  </div>
+</nav>

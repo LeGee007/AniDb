@@ -1,0 +1,6 @@
+@AniDb_HostAddress = http://localhost:5216
+
+GET {{AniDb_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

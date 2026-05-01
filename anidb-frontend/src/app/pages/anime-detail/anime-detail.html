@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-[#0a0a0a] text-white" *ngIf="anime">
+
+  <!-- Hero -->
+  <div class="relative">
+    <div class="absolute inset-0 overflow-hidden">
+      <img [src]="anime.imageUrl" class="w-full h-full object-cover opacity-10 blur-2xl scale-110" />
+    </div>
+    <div class="relative px-8 py-12 flex flex-col md:flex-row gap-10 max-w-5xl mx-auto">
+      <img
+        [src]="anime.imageUrl || 'https://placehold.co/300x420/111/222?text=?'"
+        [alt]="anime.title"
+        class="w-44 h-64 object-cover border border-white/10 shrink-0"
+      />
+      <div class="flex flex-col justify-end gap-4">
+        <p class="text-white/40 text-xs tracking-[0.2em] uppercase">{{ anime.genre }}</p>
+        <h1 class="text-4xl font-bold text-white leading-tight">{{ anime.title }}</h1>
+
+        <div class="flex items-center gap-4 mt-1">
+          <div class="flex flex-col">
+            <span class="text-white/40 text-xs tracking-widest uppercase mb-1">MAL</span>
+            <span class="text-amber-400 text-xl font-bold">{{ anime.malRating }}</span>
+          </div>
+          <div class="w-px h-8 bg-white/10"></div>
+          <div class="flex flex-col">
+            <span class="text-white/40 text-xs tracking-widest uppercase mb-1">Sayt</span>
+            <span class="text-white text-xl font-bold">{{ anime.siteRating | number:'1.1-1' }} <span class="text-white/30 text-sm font-normal">({{ anime.siteRatingCount }})</span></span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm mt-2">
+          <div><span class="text-white/40">Studiya</span> <span class="text-white ml-2">{{ anime.studio }}</span></div>
+          <div><span class="text-white/40">Qismlar</span> <span class="text-white ml-2">{{ anime.numberOfEpisodes }}</span></div>
+          <div><span class="text-white/40">Davomiyligi</span> <span class="text-white ml-2">{{ anime.durationMinutes }} daq</span></div>
+          <div><span class="text-white/40">Chiqarilgan</span> <span class="text-white ml-2">{{ anime.releaseDate | date:'yyyy' }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-8 pb-16">
+    <div class="border-t border-white/5 pt-8 mb-10">
+      <p class="text-white/70 text-sm leading-relaxed max-w-3xl">{{ anime.description }}</p>
+    </div>
+
+    <!-- Trailer -->
+    <div *ngIf="trailerEmbedUrl" class="mb-12">
+      <p class="section-title" style="border-left: 2px solid #fbbf24; padding-left: 12px;">Trailer</p>
+      <div class="relative w-full" style="padding-bottom: 56.25%">
+        <iframe
+          [src]="trailerEmbedUrl"
+          class="absolute inset-0 w-full h-full border border-white/5"
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Rate -->
+    <div class="mb-12">
+      <p class="section-title" style="border-left: 2px solid #fbbf24; padding-left: 12px;">Baholang</p>
+      <div class="flex gap-2">
+        <button
+          *ngFor="let s of [1,2,3,4,5,6,7,8,9,10]"
+          (click)="rate(s)"
+          [class]="'w-9 h-9 text-xs font-semibold border transition-all duration-200 ' +
+            (userScore === s
+              ? 'bg-amber-400 border-amber-400 text-black'
+              : 'bg-transparent border-white/10 text-white/50 hover:border-amber-400 hover:text-amber-400')"
+        >{{ s }}</button>
+      </div>
+      <p *ngIf="rateMsg" class="text-amber-400 text-xs mt-3 tracking-wide">✓ Bahoyingiz qabul qilindi</p>
+    </div>
+
+    <!-- Comments -->
+    <div>
+      <p class="section-title" style="border-left: 2px solid #fbbf24; padding-left: 12px;">Izohlar</p>
+
+      <div class="border border-white/5 p-5 mb-8 flex flex-col gap-3">
+        <input [(ngModel)]="userName" placeholder="Ismingiz" class="input-field" />
+        <textarea [(ngModel)]="content" placeholder="Izoh yozing..." rows="3" class="input-field resize-none"></textarea>
+        <button (click)="submitComment()" class="btn-primary self-end">Yuborish</button>
+      </div>
+
+      <div *ngIf="comments.length === 0" class="text-white/20 text-xs tracking-widest uppercase py-10 text-center">Hali izoh yo'q</div>
+      <div *ngFor="let c of comments" class="border-b border-white/5 py-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-white font-medium text-sm">{{ c.userName }}</span>
+          <span class="text-white/30 text-xs">{{ c.createdAt | date:'dd.MM.yyyy' }}</span>
+        </div>
+        <p class="text-white/60 text-sm leading-relaxed">{{ c.content }}</p>
+      </div>
+    </div>
+  </div>
+</div>

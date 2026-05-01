@@ -1,0 +1,134 @@
+<div class="min-h-screen bg-[#0a0a0a] text-white px-8 py-10">
+  <div class="flex items-center justify-between mb-10">
+    <div>
+      <p class="section-title">Boshqaruv</p>
+      <h1 class="text-2xl font-semibold text-white">Admin Panel</h1>
+    </div>
+    <button (click)="openCreate()" class="btn-primary">+ Anime Qo'shish</button>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="showForm" class="border border-white/5 p-8 mb-10 bg-[#111]">
+    <h2 class="text-sm tracking-[0.15em] uppercase text-white/50 mb-6">{{ editingId ? 'Animeni Tahrirlash' : 'Yangi Anime' }}</h2>
+
+    <!-- Jikan search -->
+    <div *ngIf="!editingId" class="relative mb-6">
+      <label class="text-white/50 text-xs tracking-widest uppercase mb-2 block">MyAnimeList dan qidirish</label>
+      <input [(ngModel)]="jikanQuery" (ngModelChange)="onJikanSearch()" placeholder="masalan: Naruto, Attack on Titan..." class="input-field" />
+      <div *ngIf="jikanLoading" class="text-white/40 text-xs mt-2">Ma'lumot yuklanmoqda...</div>
+      <div *ngIf="jikanResults.length > 0" class="absolute z-10 w-full bg-[#161616] border border-white/10 mt-px shadow-2xl">
+        <div
+          *ngFor="let item of jikanResults"
+          (click)="selectJikan(item)"
+          class="flex items-center gap-4 px-4 py-3 hover:bg-white/5 cursor-pointer border-b border-white/5 last:border-0"
+        >
+          <img [src]="item.images?.jpg?.image_url" class="w-8 h-11 object-cover opacity-80" />
+          <div>
+            <div class="text-white text-sm">{{ item.title }}</div>
+            <div class="text-white/40 text-xs mt-0.5">{{ item.score }} ⭐ · {{ item.aired?.from | date:'yyyy' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fields -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Nomi</label>
+        <input [(ngModel)]="form.title" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Studiya</label>
+        <input [(ngModel)]="form.studio" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">MAL Reytingi</label>
+        <input [(ngModel)]="form.malRating" type="number" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Davomiyligi (daq)</label>
+        <input [(ngModel)]="form.durationMinutes" type="number" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Qismlar soni</label>
+        <input [(ngModel)]="form.numberOfEpisodes" type="number" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Chiqarilgan sana</label>
+        <input [(ngModel)]="form.releaseDate" type="date" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1 md:col-span-2">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Rasm URL</label>
+        <input [(ngModel)]="form.imageUrl" class="input-field" />
+      </div>
+      <div class="flex flex-col gap-1 md:col-span-2">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Trailer URL (YouTube)</label>
+        <input [(ngModel)]="form.trailerUrl" placeholder="https://www.youtube.com/watch?v=..." class="input-field" />
+      </div>
+
+      <!-- Genre multi-select -->
+      <div class="md:col-span-2 flex flex-col gap-2">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Janrlar</label>
+        <div class="flex flex-wrap gap-2" *ngIf="selectedGenres.length > 0">
+          <span *ngFor="let g of selectedGenres" class="flex items-center gap-1.5 border border-white/15 text-white text-xs px-3 py-1">
+            {{ g }}
+            <button (click)="removeGenre(g)" class="text-white/40 hover:text-white leading-none text-base">&times;</button>
+          </span>
+        </div>
+        <div class="relative">
+          <input [(ngModel)]="genreInput" placeholder="Janr qidiring (masalan: dr, act...)" class="input-field" autocomplete="off" />
+          <div *ngIf="filteredGenres.length > 0" class="absolute z-10 w-full bg-[#161616] border border-white/10 mt-px shadow-2xl max-h-48 overflow-y-auto">
+            <div
+              *ngFor="let g of filteredGenres"
+              (click)="addGenre(g)"
+              class="px-4 py-2.5 hover:bg-white/5 cursor-pointer text-sm text-white/70 hover:text-white border-b border-white/5 last:border-0"
+            >{{ g }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="md:col-span-2 flex flex-col gap-1">
+        <label class="text-white/50 text-xs tracking-widest uppercase">Tavsif</label>
+        <textarea [(ngModel)]="form.description" rows="4" class="input-field resize-none"></textarea>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div *ngIf="form.imageUrl" class="mt-5">
+      <img [src]="form.imageUrl" class="h-28 object-cover border border-white/10 opacity-80" />
+    </div>
+
+    <div class="flex gap-3 mt-6">
+      <button (click)="save()" class="btn-primary">Saqlash</button>
+      <button (click)="showForm = false" class="btn-ghost">Bekor qilish</button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="border border-white/5 overflow-x-auto">
+    <table class="w-full text-sm text-left">
+      <thead class="border-b border-white/5">
+        <tr>
+          <th class="px-5 py-3 text-white/40 text-xs tracking-widest uppercase font-normal">Nomi</th>
+          <th class="px-5 py-3 text-white/40 text-xs tracking-widest uppercase font-normal">Janr</th>
+          <th class="px-5 py-3 text-white/40 text-xs tracking-widest uppercase font-normal">Studiya</th>
+          <th class="px-5 py-3 text-white/40 text-xs tracking-widest uppercase font-normal">Reyting</th>
+          <th class="px-5 py-3 text-white/40 text-xs tracking-widest uppercase font-normal">Amallar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let anime of animes" class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+          <td class="px-5 py-3.5 text-white">{{ anime.title }}</td>
+          <td class="px-5 py-3.5 text-white/60 text-xs">{{ anime.genre }}</td>
+          <td class="px-5 py-3.5 text-white/60 text-xs">{{ anime.studio }}</td>
+          <td class="px-5 py-3.5 text-amber-400 font-semibold">{{ anime.malRating }}</td>
+          <td class="px-5 py-3.5 flex gap-2">
+            <button (click)="openEdit(anime)" class="border border-white/10 hover:border-white/30 text-white/60 hover:text-white text-xs px-3 py-1 transition-colors">Tahrirlash</button>
+            <button (click)="delete(anime.id)" class="border border-red-900/40 hover:border-red-500/50 text-red-400/60 hover:text-red-400 text-xs px-3 py-1 transition-colors">O'chirish</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
